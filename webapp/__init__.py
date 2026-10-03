@@ -1,0 +1,3 @@
+"""
+CoinPulse Web Application Package
+"""

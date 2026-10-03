@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoinPulse - Live Cryptocurrency Prices & Market Intelligence</title>
+  <meta name="description" content="Real-time cryptocurrency prices, market caps, trading volume, interactive charts, and portfolio manager.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="dark">
+
+  <!-- Top Global Stats Bar -->
+  <div class="global-bar">
+    <div class="container global-bar-content">
+      <span>Cryptos: <strong id="global-cryptos">-</strong></span>
+      <span>Total Market Cap: <strong id="global-mcap">-</strong></span>
+      <span>24h Volume: <strong id="global-vol">-</strong></span>
+      <span>Dominance: <strong>BTC: <span id="global-btc-dom">-</span>%</strong> <strong>ETH: <span id="global-eth-dom">-</span>%</strong></span>
+
+      <div class="currency-selector-wrapper">
+        <div class="live-clock-badge" id="global-live-clock" title="Real-Time UTC Timestamp">
+          <i class="fas fa-clock text-primary"></i>
+          <span class="live-clock-text" id="live-clock-text">--:--:-- UTC</span>
+        </div>
+        <i class="fas fa-coins text-warning" style="margin-right: 0.35rem;"></i>
+        <select id="global-currency-select" class="currency-select" aria-label="Select Currency">
+          <option value="usd" selected>USD ($)</option>
+          <option value="eur">EUR (€)</option>
+          <option value="gbp">GBP (£)</option>
+          <option value="inr">INR (₹)</option>
+          <option value="btc">BTC (₿)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Header Nav -->
+  <header class="navbar">
+    <div class="container navbar-content">
+      <a href="index.html" class="logo">
+        <img src="favicon.png" alt="CoinPulse Logo" class="logo-img">
+        <span class="logo-text">CoinPulse</span>
+      </a>
+
+      <nav class="nav-links" id="nav-menu">
+        <a href="index.html" class="nav-link active">Markets</a>
+        <a href="exchanges.html" class="nav-link">Exchanges</a>
+        <a href="categories.html" class="nav-link">Categories</a>
+        <a href="watchlist.html" class="nav-link"><i class="far fa-star"></i> Watchlist</a>
+        <a href="portfolio.html" class="nav-link"><i class="fas fa-pie-chart"></i> Portfolio</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Search Box -->
+        <div class="search-box-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="global-search-input" placeholder="Search coins..." autocomplete="off">
+          <div class="search-results-dropdown" id="global-search-results"></div>
+        </div>
+
+        <!-- Theme Switcher Button -->
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+
+        <!-- Prominent Log In Button with Icon -->
+        <button class="header-login-btn" id="header-login-btn" title="Sign In or Register">
+          <i class="fas fa-user-circle"></i>
+          <span id="header-login-text">Log In</span>
+        </button>
+
+        <!-- Hamburger Menu Button -->
+        <div class="user-menu-wrapper" id="user-menu-wrapper">
+          <button class="hamburger-btn" id="user-menu-btn" aria-label="User Menu" title="Menu & Options">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <div class="user-menu-header" id="menu-user-info-box">
+              <div class="user-avatar-badge guest"><i class="fas fa-user-circle"></i></div>
+              <div class="user-details-text">
+                <div class="user-name-title">Guest User</div>
+                <div class="user-email-subtitle">Sign in to sync preferences</div>
+              </div>
+            </div>
+            <div id="menu-guest-item">
+              <button class="dropdown-item open-auth-btn" id="open-login-btn">
+                <i class="fas fa-sign-in-alt text-primary"></i> Sign In / Register
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-title">NAVIGATION</div>
+            <a href="index.html" class="dropdown-item">
+              <i class="fas fa-chart-line text-primary"></i> Markets
+            </a>
+            <a href="exchanges.html" class="dropdown-item">
+              <i class="fas fa-exchange-alt text-primary"></i> Exchanges
+            </a>
+            <a href="categories.html" class="dropdown-item">
+              <i class="fas fa-tags text-primary"></i> Categories
+            </a>
+            <a href="watchlist.html" class="dropdown-item">
+              <i class="far fa-star text-warning"></i> Watchlist
+            </a>
+            <a href="portfolio.html" class="dropdown-item">
+              <i class="fas fa-chart-pie text-success"></i> Portfolio
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" id="dropdown-theme-toggle">
+              <i class="fas fa-sun text-warning"></i> Switch Light/Dark Mode
+            </button>
+            <div id="menu-logout-item" class="hidden">
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item text-danger" id="menu-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub-header Navigation Bar -->
+  <div class="sub-nav-bar">
+    <div class="container sub-nav-content">
+      <a href="#market-table-section" class="sub-nav-pill active" data-filter="top">Top 50</a>
+      <a href="#market-table-section" class="sub-nav-pill" data-filter="trending">🔥 Trending</a>
+      <a href="watchlist.html" class="sub-nav-pill">⭐ Watchlist</a>
+      <a href="categories.html" class="sub-nav-pill">DeFi</a>
+      <a href="categories.html" class="sub-nav-pill">Layer 1</a>
+      <a href="exchanges.html" class="sub-nav-pill">Exchanges</a>
+      <a href="#market-table-section" class="sub-nav-pill" data-filter="gainers">🚀 24h Gainers</a>
+      <a href="#market-table-section" class="sub-nav-pill" data-filter="losers">📉 24h Losers</a>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container main-content">
+
+    <!-- Overview Cards Grid (Trending, Gainers, Losers) -->
+    <div class="movers-grid" id="movers-grid">
+      <!-- Card 1: Top Trending Coins -->
+      <div class="card mover-card">
+        <div class="mover-card-header">
+          <span>🔥 Trending Scraped Cryptos</span>
+        </div>
+        <div class="mover-list" id="mover-trending-list">
+          <div class="mover-skeleton"></div>
+          <div class="mover-skeleton"></div>
+        </div>
+      </div>
+
+      <!-- Card 2: Top 24h Gainer -->
+      <div class="card mover-card">
+        <div class="mover-card-header">
+          <span>🚀 Top 24h Gainer</span>
+        </div>
+        <div class="mover-list" id="mover-gainers-list">
+          <div class="mover-skeleton"></div>
+        </div>
+      </div>
+
+      <!-- Card 3: Top 24h Loser -->
+      <div class="card mover-card">
+        <div class="mover-card-header">
+          <span>📉 Top 24h Loser</span>
+        </div>
+        <div class="mover-list" id="mover-losers-list">
+          <div class="mover-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Scraper Error/Unavailable State Banner -->
+    <div class="error-banner hidden" id="market-error-banner">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="market-error-msg">LIVE DATA TEMPORARILY UNAVAILABLE. Scraper is fetching fresh web market data...</span>
+      <button class="btn btn-sm btn-outline" id="market-retry-btn"><i class="fas fa-sync"></i> Retry Scrape</button>
+    </div>
+
+    <!-- Table Toolbar & Controls -->
+    <div class="table-toolbar" id="market-table-section">
+      <div class="table-title-group">
+        <h2 class="table-heading">Live Scraped Cryptocurrencies</h2>
+        <span class="table-subtitle" id="table-subtitle-info">Scraped live from market web pages</span>
+      </div>
+
+      <div class="toolbar-controls">
+        <div class="table-search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="table-filter-input" placeholder="Search by name or symbol..." autocomplete="off">
+        </div>
+
+        <button class="btn btn-sm btn-outline" id="btn-export-markets-csv" title="Export Top 50 Live CSV">
+          <i class="fas fa-download"></i> Export CSV
+        </button>
+
+        <button class="btn btn-sm btn-outline" id="manual-refresh-btn" title="Refresh Web Scrape">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+
+        <select id="auto-refresh-select" class="form-select select-sm" aria-label="Auto Refresh Interval">
+          <option value="0">Manual Refresh</option>
+          <option value="15">Auto (15s)</option>
+          <option value="30" selected>Auto (30s)</option>
+          <option value="60">Auto (60s)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- High-Density Cryptocurrency Market Table -->
+    <div class="card table-card">
+      <div class="table-responsive">
+        <table class="market-table" id="market-table">
+          <thead>
+            <tr>
+              <th class="th-fav"></th>
+              <th class="sortable text-left" data-sort="market_cap_rank"># <i class="fas fa-sort"></i></th>
+              <th class="sortable text-left" data-sort="name">Name <i class="fas fa-sort"></i></th>
+              <th class="sortable text-right" data-sort="current_price">Price <i class="fas fa-sort"></i></th>
+              <th class="sortable text-right" data-sort="price_change_percentage_24h_in_currency">24h % <i class="fas fa-sort"></i></th>
+              <th class="sortable text-right" data-sort="market_cap">Market Cap <i class="fas fa-sort"></i></th>
+              <th class="sortable text-right" data-sort="total_volume">24h Volume <i class="fas fa-sort"></i></th>
+              <th class="text-right" style="width: 110px;">7d Trend</th>
+            </tr>
+          </thead>
+          <tbody id="market-tbody">
+            <tr class="skeleton-row"><td colspan="8"><div class="skeleton-line"></div></td></tr>
+            <tr class="skeleton-row"><td colspan="8"><div class="skeleton-line"></div></td></tr>
+            <tr class="skeleton-row"><td colspan="8"><div class="skeleton-line"></div></td></tr>
+            <tr class="skeleton-row"><td colspan="8"><div class="skeleton-line"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div class="pagination-footer">
+        <div class="page-size-selector">
+          <span>Show:</span>
+          <select id="per-page-select" class="form-select select-sm">
+            <option value="20">20</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+
+        <div class="pagination-controls">
+          <button class="btn btn-sm btn-outline" id="prev-page-btn" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+          <span class="page-info" id="page-info">Page 1</span>
+          <button class="btn btn-sm btn-outline" id="next-page-btn">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="favicon.png" alt="CoinPulse" class="logo-img"> <span>CoinPulse</span></a>
+        <p>Live cryptocurrency market intelligence powered by Python & FastAPI.</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Markets</a>
+        <a href="exchanges.html">Exchanges</a>
+        <a href="categories.html">Categories</a>
+        <a href="watchlist.html">Watchlist</a>
+        <a href="portfolio.html">Portfolio</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/market.js"></script>
+</body>
+</html>

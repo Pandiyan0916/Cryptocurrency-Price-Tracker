@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exchange Details | CoinPulse</title>
+  <meta name="description" content="Detailed exchange volume, trust rank, country, and top trading pairs.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="global-bar">
+    <div class="container global-bar-content">
+      <span>Cryptos: <strong id="global-cryptos">-</strong></span>
+      <span>Exchanges: <strong id="global-exchanges">8</strong></span>
+      <span>Market Cap: <strong id="global-mcap">-</strong></span>
+      <span>24h Vol: <strong id="global-vol">-</strong></span>
+
+      <div class="currency-selector-wrapper">
+        <div class="live-clock-badge" id="global-live-clock" title="Real-Time UTC Timestamp">
+          <i class="fas fa-clock text-primary"></i>
+          <span class="live-clock-text" id="live-clock-text">--:--:-- UTC</span>
+        </div>
+        <i class="fas fa-coins text-warning" style="margin-right: 0.35rem;"></i>
+        <select id="global-currency-select" class="currency-select" aria-label="Select Currency">
+          <option value="usd" selected>USD ($)</option>
+          <option value="eur">EUR (€)</option>
+          <option value="gbp">GBP (£)</option>
+          <option value="inr">INR (₹)</option>
+          <option value="btc">BTC (₿)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="container navbar-content">
+      <a href="index.html" class="logo">
+        <img src="favicon.png" alt="CoinPulse Logo" class="logo-img">
+        <span class="logo-text">CoinPulse</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Markets</a>
+        <a href="exchanges.html" class="nav-link active">Exchanges</a>
+        <a href="categories.html" class="nav-link">Categories</a>
+        <a href="watchlist.html" class="nav-link">Watchlist</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="search-box-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="global-search-input" placeholder="Search coin, exchange..." autocomplete="off">
+          <div class="search-results-dropdown" id="global-search-results"></div>
+        </div>
+
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+
+        <button class="header-login-btn" id="header-login-btn" title="Sign In or Register">
+          <i class="fas fa-user-circle"></i>
+          <span id="header-login-text">Log In</span>
+        </button>
+
+        <div class="user-menu-wrapper" id="user-menu-wrapper">
+          <button class="hamburger-btn" id="user-menu-btn" aria-label="User Menu" title="Menu & Options">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <div class="user-menu-header" id="menu-user-info-box">
+              <div class="user-avatar-badge guest"><i class="fas fa-user-circle"></i></div>
+              <div class="user-details-text">
+                <div class="user-name-title">Guest User</div>
+                <div class="user-email-subtitle">Sign in to sync preferences</div>
+              </div>
+            </div>
+            <div id="menu-guest-item">
+              <button class="dropdown-item open-auth-btn" id="open-login-btn">
+                <i class="fas fa-sign-in-alt text-primary"></i> Sign In / Register
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-title">NAVIGATION</div>
+            <a href="index.html" class="dropdown-item">
+              <i class="fas fa-chart-line text-primary"></i> Markets
+            </a>
+            <a href="exchanges.html" class="dropdown-item">
+              <i class="fas fa-exchange-alt text-primary"></i> Exchanges
+            </a>
+            <a href="categories.html" class="dropdown-item">
+              <i class="fas fa-tags text-primary"></i> Categories
+            </a>
+            <a href="watchlist.html" class="dropdown-item">
+              <i class="far fa-star text-warning"></i> Watchlist
+            </a>
+            <a href="portfolio.html" class="dropdown-item">
+              <i class="fas fa-chart-pie text-success"></i> Portfolio
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" id="dropdown-theme-toggle">
+              <i class="fas fa-sun text-warning"></i> Switch Light/Dark Mode
+            </button>
+            <div id="menu-logout-item" class="hidden">
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item text-danger" id="menu-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <div class="back-link-wrapper">
+      <a href="exchanges.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Exchanges</a>
+    </div>
+
+    <div class="error-banner hidden" id="exchange-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span id="exchange-error-msg">Exchange not found.</span>
+    </div>
+
+    <!-- Exchange Header Card -->
+    <div class="card exchange-header-card" id="exchange-card">
+      <div class="exchange-title-box">
+        <img src="" id="exchange-logo" class="exchange-logo" alt="Logo">
+        <div>
+          <h1 id="exchange-name" class="exchange-title">Loading Exchange...</h1>
+          <div class="exchange-meta-badges">
+            <span class="badge badge-rank" id="exchange-trust-rank">Rank #-</span>
+            <span class="badge badge-tag" id="exchange-country">Country: -</span>
+            <span class="badge badge-tag" id="exchange-year">Est. -</span>
+          </div>
+        </div>
+      </div>
+      <div class="exchange-stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Trust Score</div>
+          <div class="stat-value highlight" id="exchange-trust-score">- / 10</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">24h Trading Volume (BTC)</div>
+          <div class="stat-value" id="exchange-vol-btc">- BTC</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">24h Trading Volume (USD)</div>
+          <div class="stat-value" id="exchange-vol-usd">-</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Website</div>
+          <div class="stat-value"><a href="#" id="exchange-url" target="_blank" rel="noopener">Visit Website <i class="fas fa-external-link-alt"></i></a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Trading Pairs Table -->
+    <div class="card table-card margin-top-lg">
+      <div class="card-header">
+        <h2 class="card-title">Top Active Trading Pairs</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="market-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pair</th>
+              <th>Market</th>
+              <th>Price</th>
+              <th>24h Volume (USD)</th>
+              <th class="text-right">Trade</th>
+            </tr>
+          </thead>
+          <tbody id="tickers-tbody">
+            <tr><td colspan="6" class="text-center">Loading trading pairs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><i class="fas fa-bolt logo-icon"></i> <span>CoinPulse</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/exchanges.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated data (CSV exports) – ephemeral, potentially large
+# data/.gitkeep IS tracked (preserves the directory)
+data/*.csv
+
+# Log files – ephemeral
+# logs/.gitkeep IS tracked (preserves the directory)
+logs/
+
+# IDE / OS artefacts
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+*.DS_Store
+Thumbs.db
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*.ipynb
+
+# dotenv
+.env

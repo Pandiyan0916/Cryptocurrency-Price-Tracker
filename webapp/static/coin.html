@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryptocurrency Details & Live Price Chart | CoinPulse</title>
+  <meta name="description" content="Comprehensive cryptocurrency price analytics, market cap, circulating supply, ATH/ATL statistics, and interactive price chart.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Global Dominance Bar -->
+  <div class="global-bar">
+    <div class="container global-bar-content">
+      <span>Cryptos: <strong id="global-cryptos">-</strong></span>
+      <span>Exchanges: <strong id="global-exchanges">8</strong></span>
+      <span>Market Cap: <strong id="global-mcap">-</strong></span>
+      <span>24h Vol: <strong id="global-vol">-</strong></span>
+
+      <div class="currency-selector-wrapper">
+        <div class="live-clock-badge" id="global-live-clock" title="Real-Time UTC Timestamp">
+          <i class="fas fa-clock text-primary"></i>
+          <span class="live-clock-text" id="live-clock-text">--:--:-- UTC</span>
+        </div>
+        <i class="fas fa-coins text-warning" style="margin-right: 0.35rem;"></i>
+        <select id="global-currency-select" class="currency-select" aria-label="Select Currency">
+          <option value="usd" selected>USD ($)</option>
+          <option value="eur">EUR (€)</option>
+          <option value="gbp">GBP (£)</option>
+          <option value="inr">INR (₹)</option>
+          <option value="btc">BTC (₿)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Header Nav -->
+  <header class="navbar">
+    <div class="container navbar-content">
+      <a href="index.html" class="logo">
+        <img src="favicon.png" alt="CoinPulse Logo" class="logo-img">
+        <span class="logo-text">CoinPulse</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Markets</a>
+        <a href="exchanges.html" class="nav-link">Exchanges</a>
+        <a href="categories.html" class="nav-link">Categories</a>
+        <a href="watchlist.html" class="nav-link">Watchlist</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="search-box-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="global-search-input" placeholder="Search coin, symbol..." autocomplete="off">
+          <div class="search-results-dropdown" id="global-search-results"></div>
+        </div>
+
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+
+        <button class="header-login-btn" id="header-login-btn" title="Sign In or Register">
+          <i class="fas fa-user-circle"></i>
+          <span id="header-login-text">Log In</span>
+        </button>
+
+        <div class="user-menu-wrapper" id="user-menu-wrapper">
+          <button class="hamburger-btn" id="user-menu-btn" aria-label="User Menu" title="Menu & Options">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <div class="user-menu-header" id="menu-user-info-box">
+              <div class="user-avatar-badge guest"><i class="fas fa-user-circle"></i></div>
+              <div class="user-details-text">
+                <div class="user-name-title">Guest User</div>
+                <div class="user-email-subtitle">Sign in to sync preferences</div>
+              </div>
+            </div>
+            <div id="menu-guest-item">
+              <button class="dropdown-item open-auth-btn" id="open-login-btn">
+                <i class="fas fa-sign-in-alt text-primary"></i> Sign In / Register
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-title">NAVIGATION</div>
+            <a href="index.html" class="dropdown-item">
+              <i class="fas fa-chart-line text-primary"></i> Markets
+            </a>
+            <a href="exchanges.html" class="dropdown-item">
+              <i class="fas fa-exchange-alt text-primary"></i> Exchanges
+            </a>
+            <a href="categories.html" class="dropdown-item">
+              <i class="fas fa-tags text-primary"></i> Categories
+            </a>
+            <a href="watchlist.html" class="dropdown-item">
+              <i class="far fa-star text-warning"></i> Watchlist
+            </a>
+            <a href="portfolio.html" class="dropdown-item">
+              <i class="fas fa-chart-pie text-success"></i> Portfolio
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" id="dropdown-theme-toggle">
+              <i class="fas fa-sun text-warning"></i> Switch Light/Dark Mode
+            </button>
+            <div id="menu-logout-item" class="hidden">
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item text-danger" id="menu-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="container main-content">
+    <!-- Breadcrumbs Navigation -->
+    <nav class="coin-breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html" class="breadcrumb-link">Cryptocurrencies</a>
+      <i class="fas fa-chevron-right breadcrumb-sep"></i>
+      <span class="breadcrumb-current" id="breadcrumb-coin-name">Bitcoin Price</span>
+    </nav>
+
+    <!-- Error Banner -->
+    <div class="error-banner hidden" id="coin-error-banner">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span id="coin-error-msg">Cryptocurrency details not found.</span>
+    </div>
+
+    <!-- CoinGecko 2-Column Grid Layout -->
+    <div class="coin-detail-grid">
+      <!-- LEFT SIDEBAR: Coin Profile, Price, 24h Range, Metrics, Info Links -->
+      <aside class="coin-sidebar-column">
+        <div class="card coin-sidebar-card">
+          <!-- Identity Header -->
+          <div class="coin-sidebar-header">
+            <img id="coin-logo" class="coin-logo-sm" src="" alt="Coin Logo">
+            <div class="coin-identity-info">
+              <div class="coin-title-row">
+                <h1 class="coin-sidebar-title" id="coin-name">Loading Asset...</h1>
+                <span class="coin-symbol-badge" id="coin-symbol">-</span>
+                <span class="badge badge-rank" id="coin-rank-badge">#1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Primary Price & 24h Percentage Section -->
+          <div class="coin-sidebar-price-box">
+            <div class="price-hero-row">
+              <span class="coin-price-hero" id="coin-price">$0.00</span>
+              <span class="coin-change-pill" id="coin-change">
+                <i class="fas fa-caret-down" id="coin-change-icon"></i>
+                <span id="coin-change-text">0.00% (24h)</span>
+              </span>
+            </div>
+            <div class="price-sub-row" id="coin-sub-price">
+              <span>1.00000 BTC</span> <span class="text-success font-semibold">▲ 0.0%</span>
+            </div>
+          </div>
+
+          <!-- 24h Price Range Slider Bar -->
+          <div class="price-range-box">
+            <div class="price-range-header">
+              <span id="range-low-val" class="range-val">$0.00</span>
+              <span class="range-title">24h Range</span>
+              <span id="range-high-val" class="range-val">$0.00</span>
+            </div>
+            <div class="price-range-track">
+              <div class="price-range-fill" id="range-fill" style="width: 50%;"></div>
+              <div class="price-range-indicator" id="range-indicator" style="left: 50%;"></div>
+            </div>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="coin-sidebar-actions">
+            <button id="watchlist-btn" class="btn btn-watchlist-cg">
+              <i class="far fa-star"></i> <span id="watchlist-text">Add to Watchlist</span>
+            </button>
+            <button id="set-alert-btn" class="btn btn-icon-cg" title="Set Price Alert">
+              <i class="fas fa-bell"></i>
+            </button>
+            <button id="share-btn" class="btn btn-icon-cg" title="Share Link">
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>
+
+          <!-- Key Metrics List -->
+          <div class="metrics-list-box">
+            <div class="metric-item">
+              <span class="metric-label">Market Cap <i class="fas fa-info-circle text-muted" title="Total market capitalization of circulating supply"></i></span>
+              <span class="metric-val" id="stat-mcap-val">$0.00</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Fully Diluted Valuation <i class="fas fa-info-circle text-muted" title="Market cap if total/max supply were circulating"></i></span>
+              <span class="metric-val" id="stat-fdv-val">$0.00</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">24 Hour Trading Vol <i class="fas fa-info-circle text-muted" title="24h total volume across all trading pairs"></i></span>
+              <span class="metric-val" id="stat-vol-val">$0.00</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Circulating Supply <i class="fas fa-info-circle text-muted" title="Coins currently in active public circulation"></i></span>
+              <span class="metric-val" id="stat-supply-circ">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Total Supply <i class="fas fa-info-circle text-muted" title="Total coins created minus burned coins"></i></span>
+              <span class="metric-val" id="stat-supply-total">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Max Supply <i class="fas fa-info-circle text-muted" title="Hard limit of coins that will ever be minted"></i></span>
+              <span class="metric-val" id="stat-supply-max">∞</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">All-Time High (ATH) <i class="fas fa-info-circle text-muted" title="Highest price ever recorded"></i></span>
+              <div class="metric-val-group">
+                <span class="metric-val" id="stat-ath-val">$0.00</span>
+                <span class="metric-sub" id="stat-ath-date">-</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">All-Time Low (ATL) <i class="fas fa-info-circle text-muted" title="Lowest price ever recorded"></i></span>
+              <div class="metric-val-group">
+                <span class="metric-val" id="stat-atl-val">$0.00</span>
+                <span class="metric-sub" id="stat-atl-date">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Official Links Section -->
+          <div class="info-section">
+            <h3 class="info-heading">Info</h3>
+            <div class="info-row">
+              <span class="info-label">Website</span>
+              <div class="info-badges">
+                <a id="link-homepage" href="#" target="_blank" rel="noopener" class="info-badge hidden">
+                  <i class="fas fa-globe"></i> <span id="link-homepage-text">Official Site</span> <i class="fas fa-external-link-alt font-xs"></i>
+                </a>
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Explorers</span>
+              <div class="info-badges">
+                <a id="link-explorer" href="#" target="_blank" rel="noopener" class="info-badge hidden">
+                  <i class="fas fa-cubes"></i> <span id="link-explorer-text">Block Explorer</span> <i class="fas fa-external-link-alt font-xs"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN COLUMN: Navigation Tabs, Interactive Chart, Performance Matrix & Description -->
+      <section class="coin-main-column">
+        <!-- CoinGecko Top Sub-Nav Tabs -->
+        <div class="cg-tabs-bar" id="coin-tabs-bar">
+          <button class="cg-tab-item active" data-tab="overview"><i class="fas fa-chart-line"></i> Overview</button>
+          <button class="cg-tab-item" data-tab="markets"><i class="fas fa-store"></i> Markets</button>
+          <button class="cg-tab-item" data-tab="historical"><i class="fas fa-history"></i> Historical Data</button>
+          <button class="cg-tab-item" data-tab="news"><i class="fas fa-newspaper"></i> News</button>
+        </div>
+
+        <!-- 1. OVERVIEW TAB CONTENT -->
+        <div class="tab-pane active" id="tab-overview">
+          <!-- Interactive Chart Card -->
+          <div class="card cg-chart-card">
+            <div class="cg-chart-toolbar">
+              <div class="toolbar-left-group">
+                <button class="toolbar-pill active" id="pill-price-btn" type="button"><i class="fas fa-chart-line"></i> Price</button>
+                <button class="toolbar-pill" id="pill-compare-btn" type="button"><i class="fas fa-exchange-alt"></i> <span id="compare-btn-text">Compare</span></button>
+                <button class="btn-clear-compare hidden" id="btn-clear-compare" type="button" title="Clear comparison">&times;</button>
+              </div>
+              <div class="chart-timeframe-buttons">
+                <button class="tf-btn" data-days="1">24H</button>
+                <button class="tf-btn active" data-days="7">7D</button>
+                <button class="tf-btn" data-days="30">1M</button>
+                <button class="tf-btn" data-days="90">3M</button>
+                <button class="tf-btn" data-days="365">1Y</button>
+                <button class="tf-btn" data-days="3650">Max</button>
+              </div>
+            </div>
+
+            <div class="chart-canvas-container">
+              <canvas id="price-chart"></canvas>
+            </div>
+
+            <!-- Price Performance Breakdown Matrix Table -->
+            <div class="performance-matrix-card">
+              <h4 class="matrix-heading">Performance Matrix</h4>
+              <div class="matrix-grid">
+                <div class="matrix-cell">
+                  <span class="matrix-label">1h</span>
+                  <span class="matrix-value" id="perf-1h">-</span>
+                </div>
+                <div class="matrix-cell">
+                  <span class="matrix-label">24h</span>
+                  <span class="matrix-value" id="perf-24h">-</span>
+                </div>
+                <div class="matrix-cell">
+                  <span class="matrix-label">7d</span>
+                  <span class="matrix-value" id="perf-7d">-</span>
+                </div>
+                <div class="matrix-cell">
+                  <span class="matrix-label">14d</span>
+                  <span class="matrix-value" id="perf-14d">-</span>
+                </div>
+                <div class="matrix-cell">
+                  <span class="matrix-label">30d</span>
+                  <span class="matrix-value" id="perf-30d">-</span>
+                </div>
+                <div class="matrix-cell">
+                  <span class="matrix-label">1y</span>
+                  <span class="matrix-value" id="perf-1y">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- About / Description Card -->
+          <div class="card about-card margin-top-md">
+            <h2 class="card-title">About <span id="about-coin-title">Cryptocurrency</span></h2>
+            <p id="coin-desc" class="coin-description-text">
+              Loading asset description...
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. MARKETS TAB CONTENT -->
+        <div class="tab-pane hidden" id="tab-markets">
+          <div class="card markets-card">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title"><span id="tab-markets-coin-name">Cryptocurrency</span> Markets & Trading Pairs</h3>
+                <p class="card-subtitle">Active spot and derivative trading pairs across major exchanges</p>
+              </div>
+            </div>
+            <div class="table-responsive margin-top-md">
+              <table class="market-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Exchange</th>
+                    <th>Pair</th>
+                    <th>Price</th>
+                    <th>24h Volume</th>
+                    <th>Volume %</th>
+                    <th>Trust Score</th>
+                    <th>Trade Link</th>
+                  </tr>
+                </thead>
+                <tbody id="markets-table-body">
+                  <tr><td colspan="8" class="text-center py-4 text-muted">Loading markets data...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. HISTORICAL DATA TAB CONTENT -->
+        <div class="tab-pane hidden" id="tab-historical">
+          <div class="card historical-card">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title"><span id="tab-hist-coin-name">Cryptocurrency</span> Historical Daily Prices</h3>
+                <p class="card-subtitle">Daily historical price points, high/low range, and trading volume</p>
+              </div>
+              <div>
+                <button class="btn btn-outline btn-sm" id="btn-export-historical-csv"><i class="fas fa-download"></i> Export CSV</button>
+              </div>
+            </div>
+            <div class="table-responsive margin-top-md">
+              <table class="market-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Open Price</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Close Price</th>
+                    <th>24h Volume</th>
+                    <th>Change %</th>
+                  </tr>
+                </thead>
+                <tbody id="historical-table-body">
+                  <tr><td colspan="7" class="text-center py-4 text-muted">Loading historical price records...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. NEWS TAB CONTENT -->
+        <div class="tab-pane hidden" id="tab-news">
+          <div class="card news-card">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title">Latest <span id="tab-news-coin-name">Cryptocurrency</span> News & Analysis</h3>
+                <p class="card-subtitle">Headlines, market analysis, and developments from top financial outlets</p>
+              </div>
+            </div>
+            <div class="news-feed-grid margin-top-md" id="news-feed-container">
+              <div class="text-center py-4 text-muted">Loading latest headlines...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Compare Asset Modal -->
+  <div class="modal-backdrop hidden" id="compare-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-exchange-alt text-primary"></i> Compare Asset Performance</h3>
+        <button id="close-compare-modal" class="modal-close" type="button">&times;</button>
+      </div>
+      <div class="modal-body padding-md">
+        <p class="text-secondary font-sm margin-bottom-md">Overlay normalized percentage performance against <strong id="compare-base-coin-name">this asset</strong>:</p>
+        <div class="form-group">
+          <label class="form-label" for="compare-coin-select">Select Comparison Cryptocurrency</label>
+          <select class="form-select" id="compare-coin-select">
+            <option value="ethereum">Ethereum (ETH)</option>
+            <option value="bitcoin">Bitcoin (BTC)</option>
+            <option value="solana">Solana (SOL)</option>
+            <option value="binancecoin">BNB (BNB)</option>
+            <option value="ripple">XRP (XRP)</option>
+            <option value="cardano">Cardano (ADA)</option>
+            <option value="dogecoin">Dogecoin (DOGE)</option>
+            <option value="avalanche-2">Avalanche (AVAX)</option>
+            <option value="chainlink">Chainlink (LINK)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="cancel-compare-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="apply-compare-btn"><i class="fas fa-check"></i> Compare Performance</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><i class="fas fa-bolt logo-icon"></i> <span>CoinPulse</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/coin.js"></script>
+</body>
+</html>
