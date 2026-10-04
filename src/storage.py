@@ -74,22 +74,26 @@ def _friendly_io_error(path: Path, exc: Exception) -> None:
 # Public API
 # ---------------------------------------------------------------------------
 
-def save_snapshot(coins: list[Coin]) -> None:
+def save_snapshot(coins: list[Coin], output_path: Union[str, Path, None] = None) -> None:
     """
-    Overwrite crypto_prices.csv with the current snapshot.
+    Overwrite crypto_prices.csv (or custom output_path) with the current snapshot.
 
     Parameters
     ----------
     coins : list[Coin]
         The fully validated list of coins for this run.
+    output_path : str or Path, optional
+        Custom path for writing the snapshot CSV.
     """
     _ensure_data_dir()
     df = _coins_to_df(coins)
+    target = Path(output_path) if output_path else CSV_SNAPSHOT
+    target.parent.mkdir(parents=True, exist_ok=True)
     try:
-        df.to_csv(CSV_SNAPSHOT, index=False, encoding="utf-8")
-        logger.info("Snapshot saved → %s (%d rows)", CSV_SNAPSHOT, len(df))
+        df.to_csv(target, index=False, encoding="utf-8")
+        logger.info("Snapshot saved → %s (%d rows)", target, len(df))
     except (PermissionError, OSError) as exc:
-        _friendly_io_error(CSV_SNAPSHOT, exc)
+        _friendly_io_error(target, exc)
 
 
 def save_historical(coins: list[Coin]) -> None:
@@ -126,15 +130,16 @@ def save_historical(coins: list[Coin]) -> None:
         _friendly_io_error(CSV_HISTORICAL, exc)
 
 
-def save_all(coins: list[Coin]) -> None:
+def save_all(coins: list[Coin], output_path: Union[str, Path, None] = None) -> None:
     """
-    Save both snapshot and historical CSV in one call.
+    Save both snapshot (or custom CSV output) and historical CSV in one call.
 
     Parameters
     ----------
     coins : list[Coin]
+    output_path : str or Path, optional
     """
-    save_snapshot(coins)
+    save_snapshot(coins, output_path=output_path)
     save_historical(coins)
 
 

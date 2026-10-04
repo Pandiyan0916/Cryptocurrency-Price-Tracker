@@ -9,6 +9,7 @@
 
 ## Page Architecture
 
+
 CoinMarketCap is a **Next.js** application. The primary table is **JavaScript-rendered** — a plain HTTP `GET` returns a skeleton with minimal coin data. Selenium with ChromeDriver is required to get the live-rendered table.
 
 ---

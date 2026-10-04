@@ -122,7 +122,7 @@ def _run_cycle(args: argparse.Namespace) -> list[Coin]:
 
     # 3. Save (full validated set, before any filters)
     if not args.no_save:
-        save_all(coins_valid)
+        save_all(coins_valid, output_path=getattr(args, "output", None))
 
     # 4. Apply filters (for display only)
     displayed = apply_filters(
@@ -251,10 +251,34 @@ Examples
         help="Display only coins with a positive 24h change, sorted best-first.",
     )
     parser.add_argument(
+        "--top-gainers",
+        nargs="?",
+        const=True,
+        default=None,
+        metavar="N",
+        help="Display top N gainers (or all positive gainers if N is omitted).",
+    )
+    parser.add_argument(
         "--losers",
         action="store_true",
         default=False,
         help="Display only coins with a negative 24h change, sorted worst-first.",
+    )
+    parser.add_argument(
+        "--top-losers",
+        nargs="?",
+        const=True,
+        default=None,
+        metavar="N",
+        help="Display top N losers (or all negative losers if N is omitted).",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        default=None,
+        metavar="FILE",
+        help="Custom CSV file output path (e.g. data/custom_export.csv).",
     )
     parser.add_argument(
         "--watch",
@@ -315,6 +339,24 @@ Examples
 
 def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Validate argument constraints not expressible in argparse alone."""
+    # Process --top-gainers alias
+    top_gainers = getattr(args, "top_gainers", None)
+    if top_gainers is not None:
+        args.gainers = True
+        if isinstance(top_gainers, str) and top_gainers.isdigit():
+            args.limit = int(top_gainers)
+        elif isinstance(top_gainers, int):
+            args.limit = top_gainers
+
+    # Process --top-losers alias
+    top_losers = getattr(args, "top_losers", None)
+    if top_losers is not None:
+        args.losers = True
+        if isinstance(top_losers, str) and top_losers.isdigit():
+            args.limit = int(top_losers)
+        elif isinstance(top_losers, int):
+            args.limit = top_losers
+
     if not (1 <= args.limit <= 100):
         parser.error(f"--limit must be between 1 and 100 (got {args.limit}).")
     if args.gainers and args.losers:
